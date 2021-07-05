@@ -2,7 +2,7 @@ import copy
 
 
 class Graph:
-  def __init__(self, name=None, vertexList = []):
+  def __init__(self, name = None, vertexList = []):
     self.name = name
     self.vertexList = vertexList
   
@@ -20,10 +20,10 @@ class Graph:
     
 
   def initializeVertex(self):
-    for vertex in self.vertexList:
-      vertex.color = "WHITE";
-      vertex.parent = None;
-      vertex.distance = None
+    for vertice in self.vertexList:
+      vertice.color = "WHITE";
+      vertice.parent = None;
+      vertice.distance = None
 
 
   def setVertexDegrees(self):
@@ -77,8 +77,6 @@ class Graph:
       tree.append(u)
 
       for v in u.adj:
-        u.outDegree +=1
-        v.inDegree +=1
       
         if v.color == "WHITE":
           v.parent = u;
@@ -112,8 +110,10 @@ class Graph:
 
 
   def display(self, name = True, color = True, inDegree = True,outDegree = True, distance = True, firstTimestamp = True, secondTimestamp = True):
-    for v in self.vertexList:
-      if name:
+
+		
+		for v in self.vertexList:
+    	if name:
         print("Name:", v.name, end=' ')
       if color:
         print("|Color:", v.color, end=' ')
@@ -129,17 +129,6 @@ class Graph:
         print("| 2nd Timestamp:", v.secondTimestamp, end=' ')
       print("\n")
     
-
-
-  
-
-
-
-
-
-            
-
-
 
 
 
@@ -162,9 +151,21 @@ def DFSvisit(vertice,searchingTree, time): #visit function
   return searchingTree, time
 
 
-def mostrarAdj(graph):
-  for v in graph:
-    print("%s -> %d (in) | Adj: " %(v.name, v.inDegree), end='')
-    for x in v.adj:
-      print(x.name, end=" ")
-    print()
+
+class Vertice:
+  def __init__(self, name = None, adj = []):
+    self.color = "WHITE";
+    self.parent = None;
+    self.adj = adj;
+    self.distance = 0;
+    self.outDegree = 0;
+    self.inDegree = 0;
+    self.name = name;
+    self.firstTimestamp = 0;
+    self.secondTimestamp = 0;
+
+  def setAdj(self, adj):
+    self.adj = adj;
+  
+  def appendAdjacentVertice(self, vertice):
+    self.adj.append(vertice)
