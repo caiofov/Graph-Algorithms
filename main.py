@@ -3,6 +3,10 @@ from graphAlgorithms import *
 
 graph = samples.g224
 
-graph.depthFirstSearch()
 
-graph.display()
+stro = graph.stronglyConnectedComponents()
+
+for i in stro:
+	for t in i:
+		print(t.name, end='')
+	print()

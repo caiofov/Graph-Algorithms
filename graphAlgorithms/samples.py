@@ -1,38 +1,38 @@
 from .structs import *
 
 #Figure 22.2
-S = Vertice("S");
-R = Vertice("R");
-T = Vertice("T");
-U = Vertice("U");
-V = Vertice("V");
-W = Vertice("W");
-X = Vertice("X");
-Y = Vertice("Y");
-S.setAdj([R,W])
-R.setAdj([S,V])
-T.setAdj([S,W,X])
-U.setAdj([T,X,Y])
-V.setAdj([R])
-W.setAdj([S,T,X])
-X.setAdj([W,Y,T,U])
-Y.setAdj([X,U])
-g222 = Graph(name="Figure 22.2", vertexList = [S,R,T,U,V,W,X,Y])
+S222 = Vertice("S");
+R222 = Vertice("R");
+T222 = Vertice("T");
+U222 = Vertice("U");
+V222 = Vertice("V");
+W222 = Vertice("W");
+X222 = Vertice("X");
+Y222 = Vertice("Y");
+S222.setAdj([R222,W222])
+R222.setAdj([S222,V222])
+T222.setAdj([S222,W222,X222])
+U222.setAdj([T222,X222,Y222])
+V222.setAdj([R222])
+W222.setAdj([S222,T222,X222])
+X222.setAdj([W222,Y222,T222,U222])
+Y222.setAdj([X222,U222])
+g222 = Graph(name="Figure 22.2", vertexList = [S222,R222,T222,U222,V222,W222,X222,Y222])
 
 #Figure 22.4
-U = Vertice("U")
-V = Vertice("V")
-W = Vertice("W")
-X = Vertice("X")
-Y = Vertice("Y")
-Z = Vertice("Z")
-U.setAdj([V,X])
-V.setAdj([Y])
-W.setAdj([Y,Z])
-X.setAdj([V])
-Y.setAdj([X])
-Z.setAdj([Z])
-g224 = Graph(name = "Figure 22.4", vertexList = [U,V,W,X,Y,Z])
+U224 = Vertice("U")
+V224 = Vertice("V")
+W224 = Vertice("W")
+X224 = Vertice("X")
+Y224 = Vertice("Y")
+Z224 = Vertice("Z")
+U224.setAdj([V224,X224])
+V224.setAdj([Y224])
+W224.setAdj([Y224,Z224])
+X224.setAdj([V224])
+Y224.setAdj([X224])
+Z224.setAdj([Z224])
+g224 = Graph(name = "Figure 22.4", vertexList = [U224,V224,W224,X224,Y224,Z224])
 
 
 #figure 22.6
@@ -87,3 +87,14 @@ W228.setAdj([Z228])
 Y228.setAdj([V228])
 g228 = Graph(name = "Figure 22.8", vertexList = [M228,N228,O228,P228,Q228,R228,S228,T228,U228,V228,W228,X228,Y228,Z228])
 
+#Figure 22.9 - NOT FINISHED
+A229 = Vertice("A")
+B229 = Vertice("B")
+C229 = Vertice("C")
+D229 = Vertice("D")
+E229 = Vertice("E")
+F229 = Vertice("F")
+G229 = Vertice("G")
+H229 = Vertice("H")
+
+g229 = Graph(name="Figure 22.9",vertexList =[A229,B229,C229,D229,E229,F229,G229,H229])
