@@ -155,19 +155,22 @@ class Graph:
 
 
 class Vertice:
-  def __init__(self, name = None, adj = []):
-    self.color = "WHITE";
-    self.parent = None;
-    self.adj = adj;
-    self.distance = 0;
-    self.outDegree = 0;
-    self.inDegree = 0;
-    self.name = name;
-    self.firstTimestamp = 0;
-    self.secondTimestamp = 0;
+  def __init__(self, name = None, adj = [], weight = []):
+    self.color = "WHITE"; #string
+    self.parent = None; #vertice
+    self.adj = adj; #list
+    self.weight = weight; #list
+    self.distance = 0; #int
+    self.outDegree = 0; #int
+    self.inDegree = 0; #int
+    self.name = name; #string
+    self.firstTimestamp = 0; #int
+    self.secondTimestamp = 0; #Int
 
   def setAdj(self, adj):
     self.adj = adj;
+  def setWeight (self, weight):
+    self.weight = weight;
 
   def appendAdjacentVertice(self, vertice):
     self.adj.append(vertice)
