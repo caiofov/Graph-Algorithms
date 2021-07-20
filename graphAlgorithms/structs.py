@@ -19,13 +19,36 @@ def DFSvisit(vertice,searchingTree, time): #visit function
     return searchingTree, time
 
 class Graph:
-  def __init__(self, name = None, vertexList = []):
+  def __init__(self, name = None, vertexList = [], edgeList = [], direct = None):
     self.name = name
     self.vertexList = vertexList
+    self.edgesList = edgeList
+    self.direct = direct
 
 
   def setVertex(self, list):
     self.vertexList = list
+
+  def setEdges(self, list):
+    self.edgesList = list
+  
+  def initializeEdges(self, list):
+    self.edgesList = []
+
+    for vertex in self.vertexList:
+      idx = 0
+      for adj in vertex.adj:
+        addToList = True
+        for edge in self.edgesList:
+          endpoints = edge.endpoints()
+          if endpoints == [vertex, adj] or endpoints == [adj,vertex]:
+            addToList = False
+            break
+        
+        if addToList:
+          self.edgesList.append(Edge([vertex, adj]), vertex.adjWeight[idx], self.direct)
+        
+        idx += 1
 
 
   def appendVertice(self, vertice):
@@ -149,7 +172,9 @@ class Graph:
         print("| 2nd Timestamp:", v.secondTimestamp, end=' ')
       print("\n")
 
-
+  def kruskalMinimumSpanningTree(self):
+    subset = []
+    
 
 
 
@@ -159,7 +184,7 @@ class Vertice:
     self.color = "WHITE"; #string
     self.parent = None; #vertice
     self.adj = adj; #list
-    self.weight = weight; #list
+    self.adjWeight = weight; #list
     self.distance = 0; #int
     self.outDegree = 0; #int
     self.inDegree = 0; #int
@@ -169,8 +194,27 @@ class Vertice:
 
   def setAdj(self, adj):
     self.adj = adj;
-  def setWeight (self, weight):
-    self.weight = weight;
+  def setAdjWeight (self, weight):
+    self.adjWeight = weight;
 
   def appendAdjacentVertice(self, vertice):
     self.adj.append(vertice)
+
+
+class Edge:
+  def __init__(self, endpoints = [], weight = 1, direct = False):
+    self.endpoints = endpoints
+    self.weight = weight
+    self.direct = direct
+
+  def setEndpoints(self, endpoints):
+    self.endpoints = endpoints
+  
+  def setWeight(self, weight):
+    self.weight = weight
+  
+  def setDirect(self, direct):
+    self.direct = direct
+  
+  def getEndpoints(self):
+    return self.endpoints
