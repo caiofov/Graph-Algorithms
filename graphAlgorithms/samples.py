@@ -18,6 +18,7 @@ W222.setAdj([S222,T222,X222])
 X222.setAdj([W222,Y222,T222,U222])
 Y222.setAdj([X222,U222])
 g222 = Graph(name="Figure 22.2", vertexList = [S222,R222,T222,U222,V222,W222,X222,Y222])
+g222.initializeEdges()
 
 #Figure 22.4
 U224 = Vertice("U")

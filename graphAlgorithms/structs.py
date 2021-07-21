@@ -18,21 +18,52 @@ def DFSvisit(vertice,searchingTree, time): #visit function
 
     return searchingTree, time
 
+def union(graph1, graph2, edge, direct = False):#union function
+  v1,v2 = edge
+
+  v1.appendAdjacentVertice(v2)
+  if not direct:
+    v2.appendAdjacentVertice(v1)
+  
+  name = graph1.name + " U " + graph2.name
+  vertexList = graph1.vertexList + graph2.vertexList
+
+
+  newGraph = Graph(name, vertexList, direct)
+  newGraph.addEdge(edge)
+
+  
+  return newGraph
+
 class Graph:
   def __init__(self, name = None, vertexList = [], edgeList = [], direct = None):
-    self.name = name
-    self.vertexList = vertexList
-    self.edgesList = edgeList
-    self.direct = direct
+    self.name = name #string
+    self.vertexList = vertexList #list
+    self.edgesList = edgeList #list
+    self.direct = direct #boolean
 
 
   def setVertex(self, list):
     self.vertexList = list
-
   def setEdges(self, list):
     self.edgesList = list
+  def appendVertice(self, vertice):
+    self.vertexList.append(vertice)
   
-  def initializeEdges(self, list):
+  def initializeVertex(self):
+    for vertice in self.vertexList:
+      vertice.color = "WHITE";
+      vertice.parent = None;
+      vertice.distance = None
+  
+  def setVertexDegrees(self):
+    for vertice in self.vertexList:
+      for ad in vertice.adj:
+        vertice.outDegree +=1
+        ad.inDegree +=1
+  def addEdge(self,edge):
+    self.edgesList.append(edge)
+  def initializeEdges(self):
     self.edgesList = []
 
     for vertex in self.vertexList:
@@ -50,28 +81,8 @@ class Graph:
         
         idx += 1
 
-
-  def appendVertice(self, vertice):
-    self.vertexList.append(vertice)
-
-
   def topologicalSort(self):
     return sorted(self.vertexList, reverse=True,key=lambda x: x.secondTimestamp)
-    
-
-  def initializeVertex(self):
-    for vertice in self.vertexList:
-      vertice.color = "WHITE";
-      vertice.parent = None;
-      vertice.distance = None
-
-
-  def setVertexDegrees(self):
-    for vertice in self.vertexList:
-      for ad in vertice.adj:
-        vertice.outDegree +=1
-        ad.inDegree +=1
-
 
   def getTransposed(self, transposedName = None):
     transposedGraph = Graph(name = self.name + " transposed")
@@ -102,6 +113,8 @@ class Graph:
 
     return Gt_sorted.depthFirstSearch(returnTree=True)
 
+  def getComponents(self):
+    return self.deepFirstSearch(returnTree = True);
 
   def breadthFirstSearch(self, returnTree = False):
     self.initializeVertex()
@@ -113,7 +126,6 @@ class Graph:
     S.color = "GRAY"
     queue.append(S)
 
-
     while len(queue)>0:
       u = queue[0];
       queue = queue[1:];
@@ -123,9 +135,7 @@ class Graph:
       
         if v.color == "WHITE":
           v.parent = u;
-
           v.distance = u.distance + 1
-
           v.color = "GRAY"
           queue.append(v)
 
@@ -172,8 +182,39 @@ class Graph:
         print("| 2nd Timestamp:", v.secondTimestamp, end=' ')
       print("\n")
 
+  def componentForEachVertice(self, components):
+    for set in components:
+      for vertex in set.vertexList:
+        vertex.setSet(set)
+
   def kruskalMinimumSpanningTree(self):
-    subset = []
+    components = self.getComponents()
+    self.componentForEachVertice(components)
+  
+    self.initializeEdges()
+    self.edgesList = sorted(self.edgesList, key=lambda x: x.weight)
+
+    A = Graph("Subset",direct = self.direct)
+    
+    numEgdes = len(self.edgesList)
+    numVertices = len(self.vertexList)
+    i = 0
+
+    while i <= numEgdes and len(A.vertexList) < numVertices - 1:
+      edge = self.edgesList[i].endpoints
+      u,v = edge
+
+      if u.set != v.set:
+        A.addEdge(edge)
+        newComponent = union(u.set,v.set, edge, self.direct, returnGraph = False)
+
+        u.setSet(newComponent)
+        v.setSet(newComponent)
+
+      i+=1
+
+    return A
+  
     
 
 
@@ -191,21 +232,25 @@ class Vertice:
     self.name = name; #string
     self.firstTimestamp = 0; #int
     self.secondTimestamp = 0; #Int
+    self.set = [] #list
 
   def setAdj(self, adj):
     self.adj = adj;
   def setAdjWeight (self, weight):
     self.adjWeight = weight;
+  def setSet(self, component):
+    self.set = component
 
   def appendAdjacentVertice(self, vertice):
     self.adj.append(vertice)
 
+  
 
 class Edge:
   def __init__(self, endpoints = [], weight = 1, direct = False):
-    self.endpoints = endpoints
-    self.weight = weight
-    self.direct = direct
+    self.endpoints = endpoints #tuple of vertices
+    self.weight = weight #int
+    self.direct = direct #boolean
 
   def setEndpoints(self, endpoints):
     self.endpoints = endpoints
@@ -218,3 +263,5 @@ class Edge:
   
   def getEndpoints(self):
     return self.endpoints
+
+
