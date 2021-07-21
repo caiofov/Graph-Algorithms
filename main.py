@@ -1,13 +1,16 @@
 from graphAlgorithms import *
 
 
-graph = samples.g224
+graph = samples.g231
+
+# for edge in graph.edgesList:
+#   v,u = edge.endpoints
+#   print(v.name, " - ", u.name, "|", edge.weight)
 
 
-stro = graph.stronglyConnectedComponents()
+mst = graph.kruskalMinimumSpanningTree()
 
-for i in stro:
-	for t in i:
-		print(t.name, end='')
-	print()
 
+for edge in mst.edgesList:
+  v,u = edge.endpoints
+  print(v.name, " - ", u.name, "|", edge.weight)
