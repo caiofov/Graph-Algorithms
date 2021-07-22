@@ -11,6 +11,8 @@ I've been implementing those algorithms in Python as I learn them in Graph Algor
 - Graph structure
 - Vertice structure
 - Some graph samples
+- Kruskal algorithm for minimum spanning trees
+- Some other functions
 
 
 ### In progress:
@@ -18,6 +20,8 @@ I've been implementing those algorithms in Python as I learn them in Graph Algor
 - Package documentation (how to use and more details)
 - More samples
 - Samples images (it will be helpful to visualize the graphs)
+- Prim algorithm for minimum spanning trees
+- More functions
 
 
 
