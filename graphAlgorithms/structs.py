@@ -19,7 +19,11 @@ def DFSvisit(vertice,searchingTree, time): #visit function
     return searchingTree, time
 
 def union(graph1, graph2, edge, directed = False):#union function
+<<<<<<< HEAD
   v1,v2 = edge.endpoints
+=======
+  v1,v2 = edge
+>>>>>>> origin/master
 
   v1.appendAdjacentVertice(v2)
   if not directed:
@@ -33,6 +37,10 @@ def union(graph1, graph2, edge, directed = False):#union function
   for vert2 in graph2.vertexList:
     newGraph.appendVertice(vert2)
 
+<<<<<<< HEAD
+=======
+  newGraph = Graph(name, vertexList, directed)
+>>>>>>> origin/master
   newGraph.addEdge(edge)
 
   return newGraph
@@ -70,22 +78,40 @@ class Graph:
       vertice.outDegree = 0
       vertice.initializeVertexWeight()
     
+<<<<<<< HEAD
   def setVertexDegrees(self):
     for vertice in self.vertexList:
       vertice.setDegrees()
   
+=======
+    
+  def setVertexDegrees(self):
+    for vertice in self.vertexList:
+      vertice.setDegrees()
+>>>>>>> origin/master
   def addEdge(self,edge):
     self.edgesList.append(edge)
     u,v = edge.endpoints
 
+<<<<<<< HEAD
     self.appendVertice(u)
     self.appendVertice(v)
+=======
+    if not u in self.vertexList:
+      self.vertexList.append(u)
+    if not v in self.vertexList:
+        self.vertexList.append(u)
+>>>>>>> origin/master
     
     if not u in v.adj:
       v.appendAdjacentVertice(u)
       v.adjWeight.append(edge.weight)
 
+<<<<<<< HEAD
     if not u in v.adj and not self.directed:
+=======
+    if not u in v.adj and not edge.directed:
+>>>>>>> origin/master
       v.appendAdjacentVertice(u)
       v.adjWeight.append(edge.weight)
       
@@ -96,11 +122,17 @@ class Graph:
 
     for vertex in self.vertexList:
       idx = 0
+
       for adj in vertex.adj:
        
         if not any(edge.endpoints == [vertex, adj] or edge.endpoints == [adj,vertex] for edge in self.edgesList):
           self.edgesList.append(Edge([vertex, adj], vertex.adjWeight[idx], self.directed))
       
+<<<<<<< HEAD
+=======
+        
+
+>>>>>>> origin/master
         idx += 1
 
   def topologicalSort(self):
@@ -134,8 +166,13 @@ class Graph:
 
     return Gt_sorted.depthFirstSearch(returnTree=True)
 
+<<<<<<< HEAD
   # def getComponents(self):
   #   return self.depthFirstSearch(returnTree = True);
+=======
+  def getComponents(self):
+    return self.depthFirstSearch(returnTree = True);
+>>>>>>> origin/master
 
   def breadthFirstSearch(self, returnTree = False):
     self.initializeVertex()
@@ -181,6 +218,10 @@ class Graph:
     if returnTree:
       return searchedForest
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
   def display(self, name = True, color = False, inDegree = False,outDegree = False, distance = False, firstTimestamp = False, secondTimestamp = False):
     print("Graph: ", self.name)
     for v in self.vertexList:
@@ -200,6 +241,7 @@ class Graph:
         print("| 2nd Timestamp:", v.secondTimestamp, end=' ')
       print("\n")
 
+<<<<<<< HEAD
   def displayEdges(self):
     for edge in self.edgesList:
       v,u = edge.endpoints
@@ -212,12 +254,26 @@ class Graph:
   def kruskalMinimumSpanningTree(self):
     for vertex in self.vertexList:
       vertex.setSet(Graph("",[vertex], self.directed))
+=======
+  def componentForEachVertice(self, components):
+    for component in components:
+      for vertex in component.vertexList:
+        vertex.setSet(component)
+
+  def kruskalMinimumSpanningTree(self):
+    components = self.getComponents()
+    self.componentForEachVertice(components)
+>>>>>>> origin/master
 
     if len(self.edgesList) == 0:
       self.initializeEdges()
     self.edgesList = sorted(self.edgesList, key=lambda x: x.weight)
 
+<<<<<<< HEAD
     A = Graph("Minimum Spanning Tree",directed = self.directed)
+=======
+    A = Graph("Subset",directed = self.directed)
+>>>>>>> origin/master
     
     numEgdes = len(self.edgesList)
     numVertices = len(self.vertexList)
@@ -229,8 +285,12 @@ class Graph:
 
       if u.set != v.set:
         A.addEdge(edge)
+<<<<<<< HEAD
         edge.display()
         newComponent = union(u.set,v.set, edge, self.directed)
+=======
+        newComponent = union(u.set,v.set, edge, self.directed, returnGraph = False)
+>>>>>>> origin/master
 
         for vertex in newComponent.vertexList:
           vertex.setSet(newComponent)
