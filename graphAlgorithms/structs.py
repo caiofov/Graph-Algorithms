@@ -5,7 +5,7 @@ def DFSvisit(vertice,searchingTree, time): #visit function
     vertice.color = "GRAY"
     vertice.firstTimestamp = time
 
-    searchingTree.append(vertice)
+    searchingTree.appendVertice(vertice)
 
     for v in vertice.adj:
       if v.color == "WHITE":
@@ -13,72 +13,94 @@ def DFSvisit(vertice,searchingTree, time): #visit function
         searchingTree, time = DFSvisit(v,searchingTree, time)
 
     vertice.color = "BLACK"
-    time +=1
+    time += 1
     vertice.secondTimestamp = time
 
     return searchingTree, time
 
-def union(graph1, graph2, edge, direct = False):#union function
-  v1,v2 = edge
+def union(graph1, graph2, edge, directed = False):#union function
+  v1,v2 = edge.endpoints
 
   v1.appendAdjacentVertice(v2)
-  if not direct:
+  if not directed:
     v2.appendAdjacentVertice(v1)
   
   name = graph1.name + " U " + graph2.name
-  vertexList = graph1.vertexList + graph2.vertexList
+  newGraph = Graph(name, [], directed)
+  
+  for vert1 in graph1.vertexList:
+    newGraph.appendVertice(vert1)
+  for vert2 in graph2.vertexList:
+    newGraph.appendVertice(vert2)
 
-
-  newGraph = Graph(name, vertexList, direct)
   newGraph.addEdge(edge)
 
-  
   return newGraph
 
+
 class Graph:
-  def __init__(self, name = None, vertexList = [], edgeList = [], direct = None):
+  def __init__(self, name = None, vertexList = [], edgeList = [], directed = None):
     self.name = name #string
     self.vertexList = vertexList #list
     self.edgesList = edgeList #list
-    self.direct = direct #boolean
+    self.directed = directed #boolean
 
+    self.initializeAll()
+
+  def initializeAll(self):
+    self.initializeVertex()
+    self.initializeEdges()
+    self.setVertexDegrees()
+ 
 
   def setVertex(self, list):
     self.vertexList = list
   def setEdges(self, list):
     self.edgesList = list
   def appendVertice(self, vertice):
-    self.vertexList.append(vertice)
+    if vertice not in self.vertexList:
+      self.vertexList.append(vertice)
   
   def initializeVertex(self):
     for vertice in self.vertexList:
       vertice.color = "WHITE";
       vertice.parent = None;
       vertice.distance = None
-  
+      vertice.inDegree = 0
+      vertice.outDegree = 0
+      vertice.initializeVertexWeight()
+    
   def setVertexDegrees(self):
     for vertice in self.vertexList:
-      for ad in vertice.adj:
-        vertice.outDegree +=1
-        ad.inDegree +=1
+      vertice.setDegrees()
+  
   def addEdge(self,edge):
     self.edgesList.append(edge)
+    u,v = edge.endpoints
+
+    self.appendVertice(u)
+    self.appendVertice(v)
+    
+    if not u in v.adj:
+      v.appendAdjacentVertice(u)
+      v.adjWeight.append(edge.weight)
+
+    if not u in v.adj and not self.directed:
+      v.appendAdjacentVertice(u)
+      v.adjWeight.append(edge.weight)
+      
+  
+
   def initializeEdges(self):
     self.edgesList = []
 
     for vertex in self.vertexList:
       idx = 0
       for adj in vertex.adj:
-        addToList = True
-        for edge in self.edgesList:
-          endpoints = edge.endpoints()
-          if endpoints == [vertex, adj] or endpoints == [adj,vertex]:
-            addToList = False
-            break
-        
-        if addToList:
-          self.edgesList.append(Edge([vertex, adj]), vertex.adjWeight[idx], self.direct)
-        
+       
+        if not any(edge.endpoints == [vertex, adj] or edge.endpoints == [adj,vertex] for edge in self.edgesList):
+          self.edgesList.append(Edge([vertex, adj], vertex.adjWeight[idx], self.directed))
+      
         idx += 1
 
   def topologicalSort(self):
@@ -105,7 +127,6 @@ class Graph:
 
     return transposedGraph
 
-
   def stronglyConnectedComponents(self):
     self.depthFirstSearch()
     Gt = self.getTransposed()
@@ -113,8 +134,8 @@ class Graph:
 
     return Gt_sorted.depthFirstSearch(returnTree=True)
 
-  def getComponents(self):
-    return self.deepFirstSearch(returnTree = True);
+  # def getComponents(self):
+  #   return self.depthFirstSearch(returnTree = True);
 
   def breadthFirstSearch(self, returnTree = False):
     self.initializeVertex()
@@ -132,7 +153,6 @@ class Graph:
       tree.append(u)
 
       for v in u.adj:
-      
         if v.color == "WHITE":
           v.parent = u;
           v.distance = u.distance + 1
@@ -144,26 +164,24 @@ class Graph:
     if returnTree:
       return tree
 
-
   def depthFirstSearch(self, returnTree = False):
     time = 0
     searchedForest = []
-    searchingTree = []
+    searchingTree = Graph("Searching tree")
     self.initializeVertex()
     
     for vertice in self.vertexList:
       if vertice.color == "WHITE":
         searchingTree, time = DFSvisit(vertice,searchingTree,time);
       
-      if len(searchingTree) > 0:
+      if len(searchingTree.vertexList) > 0:
         searchedForest.append(searchingTree)
-        searchingTree = []
+        searchingTree = Graph("Searching tree")
 
     if returnTree:
       return searchedForest
 
-
-  def display(self, name = True, color = True, inDegree = True,outDegree = True, distance = True, firstTimestamp = True, secondTimestamp = True):
+  def display(self, name = True, color = False, inDegree = False,outDegree = False, distance = False, firstTimestamp = False, secondTimestamp = False):
     print("Graph: ", self.name)
     for v in self.vertexList:
       if name:
@@ -182,42 +200,49 @@ class Graph:
         print("| 2nd Timestamp:", v.secondTimestamp, end=' ')
       print("\n")
 
-  def componentForEachVertice(self, components):
-    for set in components:
-      for vertex in set.vertexList:
-        vertex.setSet(set)
+  def displayEdges(self):
+    for edge in self.edgesList:
+      v,u = edge.endpoints
+      print(v.name, " - ", u.name, "|", edge.weight)
+  # def componentForEachVertice(self, components):
+  #   for component in components:
+  #     for vertex in component.vertexList:
+  #       vertex.setSet(component)
 
   def kruskalMinimumSpanningTree(self):
-    components = self.getComponents()
-    self.componentForEachVertice(components)
-  
-    self.initializeEdges()
+    for vertex in self.vertexList:
+      vertex.setSet(Graph("",[vertex], self.directed))
+
+    if len(self.edgesList) == 0:
+      self.initializeEdges()
     self.edgesList = sorted(self.edgesList, key=lambda x: x.weight)
 
-    A = Graph("Subset",direct = self.direct)
+    A = Graph("Minimum Spanning Tree",directed = self.directed)
     
     numEgdes = len(self.edgesList)
     numVertices = len(self.vertexList)
     i = 0
 
-    while i <= numEgdes and len(A.vertexList) < numVertices - 1:
-      edge = self.edgesList[i].endpoints
-      u,v = edge
+    while i < numEgdes and len(A.vertexList) <= numVertices - 1:
+      edge = self.edgesList[i]
+      u,v = edge.endpoints
 
       if u.set != v.set:
         A.addEdge(edge)
-        newComponent = union(u.set,v.set, edge, self.direct, returnGraph = False)
+        edge.display()
+        newComponent = union(u.set,v.set, edge, self.directed)
 
-        u.setSet(newComponent)
-        v.setSet(newComponent)
+        for vertex in newComponent.vertexList:
+          vertex.setSet(newComponent)
+        print(len(A.vertexList))
 
       i+=1
 
     return A
   
+  def primMinimumSpanningTree(self):
+    pass
     
-
-
 
 
 class Vertice:
@@ -234,8 +259,10 @@ class Vertice:
     self.secondTimestamp = 0; #Int
     self.set = [] #list
 
-  def setAdj(self, adj):
+  def setAdj(self, adj, weight = None):
     self.adj = adj;
+    if weight:
+      self.setAdjWeight(weight)
   def setAdjWeight (self, weight):
     self.adjWeight = weight;
   def setSet(self, component):
@@ -243,14 +270,23 @@ class Vertice:
 
   def appendAdjacentVertice(self, vertice):
     self.adj.append(vertice)
+  
+  def initializeVertexWeight(self):
+    for i in range(len(self.adj) - len(self.adjWeight)):
+      self.adjWeight.append(1)
+  
+  def setDegrees(self):
+    for vertice in self.adj:
+      self.outDegree +=1
+      vertice.inDegree +=1
 
   
 
 class Edge:
-  def __init__(self, endpoints = [], weight = 1, direct = False):
+  def __init__(self, endpoints = [], weight = 1, directed = False):
     self.endpoints = endpoints #tuple of vertices
     self.weight = weight #int
-    self.direct = direct #boolean
+    self.directed = directed #boolean
 
   def setEndpoints(self, endpoints):
     self.endpoints = endpoints
@@ -258,10 +294,13 @@ class Edge:
   def setWeight(self, weight):
     self.weight = weight
   
-  def setDirect(self, direct):
-    self.direct = direct
+  def setdirected(self, directed):
+    self.directed = directed
   
   def getEndpoints(self):
     return self.endpoints
+  
+  def display(self):
+    print(self.endpoints[0].name,"-",self.endpoints[1].name,"|", self.weight)
 
 
