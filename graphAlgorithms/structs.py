@@ -70,6 +70,7 @@ class Graph:
       vertice.distance = None
       vertice.inDegree = 0
       vertice.outDegree = 0
+      vertice.key = float('inf')
       vertice.initializeVertexWeight()
     
 
@@ -81,8 +82,10 @@ class Graph:
     self.edgesList.append(edge)
     u,v = edge.endpoints
 
-    self.appendVertice(u)
-    self.appendVertice(v)
+    if u not in self.vertexList:
+      self.appendVertice(u)
+    if v not in self.vertexList:
+      self.appendVertice(v)
 
     u.appendAdjacentVertice(v)
     u.adjWeight.append(edge.weight)
@@ -135,9 +138,6 @@ class Graph:
     Gt_sorted = Graph(name= Gt.name + " topological sorted", vertexList = Gt.topologicalSort())
 
     return Gt_sorted.depthFirstSearch(returnTree=True)
-
-  # def getComponents(self):
-  #   return self.depthFirstSearch(returnTree = True);
 
   def breadthFirstSearch(self, returnTree = False):
     self.initializeVertex()
@@ -209,11 +209,6 @@ class Graph:
     for edge in self.edgesList:
       v,u = edge.endpoints
       print(v.name, " - ", u.name, "|", edge.weight)
- 
-  # def componentForEachVertice(self, components):
-  #   for component in components:
-  #     for vertex in component.vertexList:
-  #       vertex.setSet(component)
 
 
   def kruskalMinimumSpanningTree(self):
@@ -225,18 +220,19 @@ class Graph:
     self.edgesList = sorted(self.edgesList, key=lambda x: x.weight)
 
 
-    A = Graph("Minimum Spanning Tree",directed = self.directed)
+    MST = Graph("Minimum Spanning Tree",directed = self.directed)
     
     numEgdes = len(self.edgesList)
     numVertices = len(self.vertexList)
+    edgesList = copy.deepcopy(self.edgesList)
     i = 0
 
-    while i < numEgdes and len(A.vertexList) <= numVertices - 1:
-      edge = self.edgesList[i]
+    while i < numEgdes and len(MST.vertexList) <= numVertices - 1:
+      edge = edgesList[i]
       u,v = edge.endpoints
 
       if u.set != v.set:
-        A.addEdge(edge)
+        MST.addEdge(edge)
 
         newComponent = union(u.set,v.set, edge, self.directed)
 
@@ -245,10 +241,44 @@ class Graph:
 
       i+=1
 
-    return A
+    return MST
   
-  def primMinimumSpanningTree(self):
-    pass
+  def primMinimumSpanningTree(self, root = None):
+    self.initializeVertex()
+    MST = Graph("Minimum Spanning Tree", [], directed = self.directed)
+
+    if not root:
+      root = self.vertexList[0]
+    elif not root in self.vertexList:
+      return None
+    
+    root.key = 0
+    queue = copy.deepcopy(self.vertexList)
+    queue = sorted(queue, key=lambda x: x.key)
+    
+    isRoot = True
+    while len(queue) > 0:
+      u = queue[0]
+      queue = queue[1:]
+      idx = 0
+
+      if not isRoot :
+        newEdge = Edge([u.parent, u], u.key, self.directed)
+        MST.addEdge(newEdge)
+
+  
+      for v in u.adj:
+        weight = u.adjWeight[idx]
+        idx +=1
+        if v in queue and weight < v.key:
+          v.parent = u
+          v.key = weight
+        
+      queue = sorted(queue, key=lambda x: x.key)
+      isRoot = False
+    return MST
+    
+    
     
 
 
@@ -265,6 +295,7 @@ class Vertice:
     self.firstTimestamp = 0; #int
     self.secondTimestamp = 0; #Int
     self.set = [] #list
+    self.key = float('inf') #int -> weight for prim
 
   def setAdj(self, adj, weight = None):
     self.adj = adj;

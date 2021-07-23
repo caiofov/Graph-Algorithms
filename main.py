@@ -4,8 +4,8 @@ from graphAlgorithms import *
 graph = samples.g231
 
 
-mst = graph.kruskalMinimumSpanningTree()
+kruskal = graph.kruskalMinimumSpanningTree()
+kruskal.displayEdges()
 
-
-mst.displayEdges()
-# mst.display()
+prim = graph.primMinimumSpanningTree()
+prim.displayEdges()
